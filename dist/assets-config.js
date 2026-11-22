@@ -1,10 +1,12 @@
-/* Swap these paths for approved final media. Leave blank to use the styled fallback. Videos are optional, silent loops. */
+/* Concept images are replaceable. Leave a path blank for the styled fallback. */
 window.SPA_ASSETS = {
- hero: { src: 'assets/sanctuary.webp', mobile: '', alt: 'Concept illustration of a warmly lit spa sanctuary', video: '' },
- single: { src: 'assets/single.webp', alt: 'Concept illustration of a private treatment room' },
- couples: { src: 'assets/couples.webp', alt: 'Concept illustration of a couples treatment room' },
- family: { src: 'assets/lounge.webp', alt: 'Concept illustration of a shared spa lounge' },
- corridor: { src: '', alt: 'Sanctuary corridor' }, garden: { src: '', alt: 'Garden detail', video: '' },
- planner: { src: '', alt: 'Visit planner background' }, treatment: { src: '', alt: 'Treatment detail', video: '' },
- tea: { src: '', alt: 'Herbal tea detail' }, water: { src: '', alt: 'Water detail', video: '' }
+ hero: { src: 'generated-images/sanctuary-corridor.png', mobile: '', alt: 'Concept image of a timber corridor opening onto a woodland garden', video: '' },
+ single: { src: 'generated-images/single-massage-room-v2.png', alt: 'Concept image of a private massage room facing a garden' },
+ couples: { src: 'generated-images/couples-suite.png', alt: 'Concept image of a couples spa suite' },
+ family: { src: 'generated-images/family-lounge.png', alt: 'Concept image of a shared spa lounge' },
+ corridor: { src: 'generated-images/sanctuary-corridor.png', alt: 'Concept image of a timber sanctuary corridor' },
+ garden: { src: 'generated-images/garden-detail.png', alt: 'Concept image of a peaceful garden detail', video: '' },
+ planner: { src: 'generated-images/visit-planner.png', alt: 'Concept image for the visit planner' },
+ treatment: { src: 'generated-images/treatment-detail.png', alt: 'Concept image of a spa treatment detail', video: '' },
+ tea: { src: 'generated-images/herbal-tea.png', alt: 'Concept image of herbal tea' }, water: { src: '', alt: 'Water detail', video: '' }
 };
