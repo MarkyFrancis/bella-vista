@@ -1,6 +1,6 @@
 /* Concept images are replaceable. Leave a path blank for the styled fallback. */
 window.SPA_ASSETS = {
- hero: { src: 'generated-images/sanctuary-corridor.png', mobile: '', alt: 'Concept image of a timber corridor opening onto a woodland garden', video: '' },
+ hero: { src: 'generated-images/sanctuary-corridor.png', mobile: '', alt: 'Concept image of a timber corridor opening onto a woodland garden', video: 'media/hero-home.mp4' },
  single: { src: 'generated-images/single-massage-room-v2.png', alt: 'Concept image of a private massage room facing a garden' },
  couples: { src: 'generated-images/couples-suite.png', alt: 'Concept image of a couples spa suite' },
  family: { src: 'generated-images/family-lounge.png', alt: 'Concept image of a shared spa lounge' },
