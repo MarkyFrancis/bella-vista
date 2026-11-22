@@ -3,3 +3,4 @@
 .details-gallery{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2px;background:#27352c}.gallery-media{height:300px}@media(max-width:800px){.details-gallery{grid-template-columns:1fr 1fr}.gallery-media{height:200px}.gallery-media:first-child{grid-column:1/-1;height:260px}}
 
 .media video{z-index:1;opacity:0;transition:opacity .6s}.media video.is-playing{opacity:1}
+.hero-media{z-index:0}
