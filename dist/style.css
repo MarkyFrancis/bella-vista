@@ -121,3 +121,14 @@ textarea{font:inherit;width:100%;min-height:100px;padding:12px;border:1px solid 
 .writing-quill{display:inline-block;vertical-align:baseline;width:22px;height:25px;margin-left:3px;color:#d7bc8d;transform:translateY(4px);transition:opacity .5s}
 .writing-quill svg{display:block;width:100%;height:100%}.writing-quill.finished{opacity:0}
 @media(max-width:700px){.experience-dialog-description{font-size:20px;min-height:0}}
+
+/* Reset closed screens offscreen so they can reveal again on return. */
+.shoji-screen .shoji-reset{transition:none}
+.card-media.shoji-reset .shoji-screen span{transition:none}
+
+/* Click an image to view it; drag the strip to browse. */
+.gallery-image-button{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;cursor:grab;touch-action:pan-x pan-y}
+.gallery-image-button:active{cursor:grabbing}.gallery-image-button:focus-visible{outline:3px solid #f3d8a5;outline-offset:-5px}
+.gallery-dialog{position:fixed;inset:0;width:min(1000px,calc(100vw - 40px));max-width:none;max-height:calc(100dvh - 40px);border:1px solid #a98f6c;padding:12px;background:#1e2b23;color:#f5e8d6;box-shadow:0 30px 80px #0009;overflow:auto}
+.gallery-dialog::backdrop{background:#100d0be8}.gallery-dialog-image{display:block;width:100%;max-height:calc(100dvh - 130px);object-fit:contain}.gallery-dialog-caption{margin:13px 8px 4px;font:italic 24px 'Cormorant Garamond',serif}.gallery-dialog-close{position:absolute;right:20px;top:20px;width:42px;height:42px;border:1px solid #e4cfb0;border-radius:50%;background:#1c241eea;color:#fff;font-size:26px;cursor:pointer}.gallery-dialog-close:focus-visible{outline:2px solid #f3d8a5;outline-offset:3px}
+@media(max-width:700px){.gallery-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px);padding:8px}.gallery-dialog-close{right:14px;top:14px}}

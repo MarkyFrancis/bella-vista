@@ -19,12 +19,20 @@ const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
 if('IntersectionObserver' in window && !motionPreference.matches){
   const images=[...document.querySelectorAll('.card-media')];
   const revealObserver=new IntersectionObserver(entries=>{
-    entries.filter(entry=>entry.isIntersecting).sort((a,b)=>images.indexOf(a.target)-images.indexOf(b.target)).forEach((entry,index)=>{
-      entry.target.style.setProperty('--reveal-delay',`${images.indexOf(entry.target) * 500}ms`);
-      entry.target.classList.add('shoji-revealed');
-      revealObserver.unobserve(entry.target);
+    entries.forEach(entry=>{
+      const image=entry.target;
+      if(entry.isIntersecting){
+        image.style.setProperty('--reveal-delay',`${images.indexOf(image) * 500}ms`);
+        image.classList.remove('shoji-reset');
+        requestAnimationFrame(()=>{if(image.dataset.inView==='true')image.classList.add('shoji-revealed')});
+        image.dataset.inView='true';
+      }else{
+        image.dataset.inView='false';
+        image.classList.add('shoji-reset');
+        image.classList.remove('shoji-revealed');
+      }
     });
-  },{threshold:.12});
+  },{threshold:0});
   images.forEach(image=>{
     const screen=document.createElement('div');
     screen.className='shoji-screen';
@@ -39,19 +47,20 @@ const gallery=document.querySelector('.details-gallery');
 const galleryTrack=gallery.querySelector('.gallery-track');
 const galleryGroup=gallery.querySelector('.gallery-group');
 gallery.querySelectorAll('img').forEach(image=>image.draggable=false);
-let galleryDragging=false, galleryStartX=0, galleryStartScroll=0, galleryVisible=false, resumeAfterDrag=false;
+let galleryDragging=false, galleryStartX=0, galleryStartScroll=0, galleryVisible=false, resumeAfterDrag=false, galleryPointerItem=null, galleryPointerMoved=false;
 gallery.addEventListener('pointerdown',event=>{
   if(event.pointerType!=='mouse'||event.button!==0)return;
   event.preventDefault();
+  galleryPointerItem=event.target.closest('.gallery-media');galleryPointerMoved=false;
   galleryDragging=true;resumeAfterDrag=false;galleryStartX=event.clientX;galleryStartScroll=gallery.scrollLeft;
   gallery.classList.add('dragging');gallery.setPointerCapture(event.pointerId);
 });
-gallery.addEventListener('pointermove',event=>{if(galleryDragging)gallery.scrollLeft=galleryStartScroll-(event.clientX-galleryStartX)});
+gallery.addEventListener('pointermove',event=>{if(galleryDragging){if(Math.abs(event.clientX-galleryStartX)>6)galleryPointerMoved=true;gallery.scrollLeft=galleryStartScroll-(event.clientX-galleryStartX)}});
 function endGalleryDrag(){if(galleryDragging)resumeAfterDrag=true;galleryDragging=false;gallery.classList.remove('dragging')}
 gallery.addEventListener('pointerleave',()=>{resumeAfterDrag=false});
 gallery.addEventListener('touchstart',()=>{resumeAfterDrag=false},{passive:true});
 gallery.addEventListener('touchend',()=>{resumeAfterDrag=true},{passive:true});
-gallery.addEventListener('pointerup',endGalleryDrag);
+gallery.addEventListener('pointerup',event=>{if(galleryDragging&&!galleryPointerMoved&&galleryPointerItem)openGalleryImage(galleryPointerItem);galleryPointerItem=null;endGalleryDrag()});
 gallery.addEventListener('pointercancel',endGalleryDrag);
 gallery.addEventListener('lostpointercapture',endGalleryDrag);
 if(!motionPreference.matches){
@@ -119,3 +128,26 @@ dialogPlan.addEventListener('click',()=>{
   const service=document.querySelector('#service');service.value=dialogPlan.dataset.experience;service.dispatchEvent(new Event('change',{bubbles:true}));
   experienceDialog.close();
 });
+
+// Gallery images open on click, while pointer dragging continues to scroll the strip.
+const galleryDialog=document.querySelector('.gallery-dialog');
+const galleryDialogImage=galleryDialog.querySelector('img');
+const galleryCaption=galleryDialog.querySelector('.gallery-dialog-caption');
+const galleryNames={garden:'Woodland garden',treatment:'Treatment details',tea:'Herbal tea'};
+function openGalleryImage(item){
+  const image=item.querySelector('img');if(!image)return;
+  galleryDialogImage.src=image.src;
+  const original=galleryGroup.querySelector(`[data-asset="${item.dataset.asset}"] img`);
+  galleryDialogImage.alt=original?original.alt:'';
+  galleryCaption.textContent=galleryNames[item.dataset.asset]||'';
+  galleryDialog.showModal();
+}
+gallery.querySelectorAll('.gallery-media').forEach(item=>{
+  const button=document.createElement('button');button.type='button';button.className='gallery-image-button';
+  button.setAttribute('aria-label','View '+(galleryNames[item.dataset.asset]||'gallery image'));
+  if(item.closest('[aria-hidden="true"]'))button.tabIndex=-1;
+  item.append(button);
+  button.addEventListener('click',event=>{if(event.detail===0||event.pointerType!=='mouse')openGalleryImage(item)});
+});
+galleryDialog.querySelector('.gallery-dialog-close').addEventListener('click',()=>galleryDialog.close());
+
