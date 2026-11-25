@@ -33,3 +33,91 @@ textarea{font:inherit;width:100%;min-height:100px;padding:12px;border:1px solid 
 @media(max-width:800px){.menu-toggle{display:inline-flex;align-items:center;gap:7px;border:1px solid #d7c3a2;border-radius:50px;background:#251e17e8;color:#fff3e2;font:600 12px 'DM Sans',sans-serif;letter-spacing:.04em;padding:11px 13px;cursor:pointer}.menu-toggle:focus-visible{outline:2px solid #d0a96d;outline-offset:4px}.header.menu-open nav{display:flex;position:absolute;top:calc(100% - 4px);right:5%;width:min(300px,90vw);flex-direction:column;gap:0;align-items:stretch;padding:8px;border:1px solid #b49a75;background:#211d18f5;box-shadow:0 16px 32px #0006;border-radius:14px;color:#fff3e2}.header.menu-open nav a{display:block;padding:14px 16px;margin:0;border-radius:8px;font-size:15px}.header.menu-open nav .mobile-planner-link{display:block}.header.menu-open{opacity:1;transform:none;pointer-events:auto}.staff-page .page-shell{width:calc(100% - 24px);margin:12px auto;padding:24px 18px}.staff-page:not(.staff-signed-in) .page-shell{width:calc(100% - 32px);padding:30px 22px}}
 @media(max-width:390px){.header-cta{padding:11px 12px;font-size:10px}.menu-toggle{padding:10px;font-size:11px}.header{gap:5px}}
 .appointment-statuses{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 14px}.status-badge{display:inline-block;border:1px solid transparent;border-radius:999px;padding:5px 11px;font-size:13px;font-weight:600;line-height:1.4}.status-upcoming{color:#1b4d70;background:#dceefa;border-color:#a8cbdf}.status-active{color:#155439;background:#d8efdf;border-color:#9bcbb0}.status-cleaning{color:#6a470c;background:#f8e8bd;border-color:#dcc387}.status-completed,.status-reviewed{color:#344d2a;background:#dfead6;border-color:#b4cbaa}.status-cancelled,.status-rejected{color:#802c2c;background:#fbe2df;border-color:#dfb4af}.status-pending,.status-late{color:#714800;background:#fff0c9;border-color:#e2c985}.cancellation-result{margin:22px 0;padding:18px 22px;background:#e0f0e2;border:1px solid #9dc3a6;border-radius:8px;color:#183e26}.cancellation-result h2{font:600 28px 'Cormorant Garamond',serif;margin:0 0 8px}.cancellation-result p{line-height:1.6;margin:0}
+
+/* Experience images open like a set of sliding timber screens. */
+.card-media:hover img,.gallery-media:hover img{transform:none}
+.shoji-screen{position:absolute;inset:0;z-index:2;display:flex;pointer-events:none;overflow:hidden}
+.shoji-screen span{flex:1;background:linear-gradient(90deg,#342c21,#514333 48%,#372e23);border-right:1px solid #b7a07b55;transform:translateX(0);transition:transform 1.25s cubic-bezier(.65,0,.2,1);transition-delay:var(--reveal-delay,0ms)}
+.shoji-screen span:nth-child(-n+3){transform-origin:left}
+.shoji-revealed .shoji-screen span:nth-child(-n+3){transform:translateX(-310%)}
+.shoji-revealed .shoji-screen span:nth-child(n+4){transform:translateX(310%)}
+/* Two identical, noninteractive strips form the continuous gallery. */
+.details-gallery{display:block;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;touch-action:pan-x pan-y}
+.details-gallery:focus-visible{outline:3px solid #d1ad73;outline-offset:-3px}
+.gallery-track{display:flex;width:max-content;animation:gallery-drift 55s linear infinite;will-change:transform}
+.gallery-group{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:2px;width:max(100vw,900px);flex:none;padding-right:2px}
+.gallery-media{height:300px;min-width:0}
+.details-gallery:hover .gallery-track,.details-gallery:focus-within .gallery-track,.details-gallery.gallery-manual .gallery-track{animation-play-state:paused}
+@keyframes gallery-drift{from{transform:translateX(-50%)}to{transform:translateX(0)}}
+@media(max-width:800px){.gallery-group{width:900px}.gallery-media,.gallery-media:first-child{height:200px;grid-column:auto}}
+@media(prefers-reduced-motion:reduce){.shoji-screen{display:none}.gallery-track{animation:none;transform:none;will-change:auto}.gallery-group[aria-hidden=true]{display:none}}
+
+/* Shoji: two paper screens with a fine timber lattice, sliding open in sequence. */
+.shoji-screen span{flex:0 0 50%;box-sizing:border-box;border:7px solid #554332;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(25% - 2px),#75634c calc(25% - 2px),#75634c 25%),repeating-linear-gradient(to right,transparent 0,transparent calc(33.333% - 2px),#75634c calc(33.333% - 2px),#75634c 33.333%),linear-gradient(135deg,#e3d3b8,#c4b08f);box-shadow:inset 0 0 24px #5c4c3526;transition-duration:1.15s}
+.shoji-revealed .shoji-screen span:first-child{transform:translateX(-101%)}
+.shoji-revealed .shoji-screen span:last-child{transform:translateX(101%)}
+.details-gallery{scrollbar-width:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.details-gallery::-webkit-scrollbar{display:none}
+.details-gallery.dragging{cursor:grabbing}
+.gallery-track{animation:none;transform:none;will-change:auto}
+.gallery-media img{-webkit-user-drag:none;user-select:none}
+/* Quiet ripples and a warm river stone echo the breathing rhythm. */
+.breath-art{isolation:isolate}
+.breath-art:before{content:"";position:absolute;inset:4%;border-radius:50%;background:radial-gradient(circle,#ad94702e 0%,#6c5b4720 42%,transparent 70%)}
+.breath-art .breath-ripple{border:1px solid #c1a57b55;animation:none}
+.breath-art .breath-ripple:nth-child(1){inset:13%}
+.breath-art .breath-ripple:nth-child(2){inset:22%}
+.breath-art .breath-ripple:nth-child(3){inset:31%}
+.breath-art .breath-stone{display:block;width:29%;height:22%;border-radius:52% 48% 47% 53% / 58% 60% 40% 42%;background:radial-gradient(ellipse at 35% 22%,#b5a184,#746956 40%,#3b3730 82%);box-shadow:inset -10px -12px 20px #211d19a8,0 18px 30px #160f0b70;z-index:1}
+.breath.active .breath-art .breath-ripple{animation:breathing 8s ease-in-out infinite}
+.breath.active .breath-art .breath-stone{animation:breathing 8s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.gallery-group[aria-hidden=true]{display:none}.breath.active .breath-art .breath-stone{animation:none}}
+/* Bamboo-toned rails frame each experience without covering its image. */
+.card-media{border:5px solid #776044;box-shadow:0 0 0 1px #c2a57980,inset 0 0 0 1px #d9bd8d66}
+.card-media::after{content:"";position:absolute;z-index:3;inset:4px;border:1px solid #d9c19a88;box-shadow:0 0 0 3px #362b20a6;pointer-events:none}
+@media(max-width:800px){.card-media{border-width:4px}.card-media::after{inset:3px}}
+
+/* Botanical seal and a quiet seated breathing illustration. */
+.seal{width:72px;height:54px;margin-top:80px;line-height:0;color:#a58c67}.seal svg{width:100%;height:100%}
+.meditation-art{aspect-ratio:1;max-width:500px;width:100%}.meditation-art:before{display:none}.meditation-art .meditation-scene{width:100%;height:100%;overflow:visible}
+.breath.active .meditation-person{transform-origin:240px 300px;animation:meditation-breathe 8s ease-in-out infinite}
+.breath.active .breath-wave{animation:meditation-air 8s ease-in-out infinite}.breath.active .wave-two{animation-delay:.3s}
+@keyframes meditation-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+@keyframes meditation-air{0%,100%{opacity:.35;transform:translateY(5px)}50%{opacity:1;transform:translateY(-5px)}}
+@media(max-width:800px){.seal{margin-top:30px}.meditation-art{max-width:320px}}
+@media(prefers-reduced-motion:reduce){.breath.active .meditation-person,.breath.active .breath-wave{animation:none}}
+
+/* Inhale expands and lifts the figure; exhale returns it slowly to rest. */
+.breath.active .meditation-person{transform-origin:240px 355px;animation:meditation-inhale-exhale 8s ease-in-out infinite}
+.breath.active .meditation-foliage{transform-origin:240px 384px;animation:meditation-foliage-sway 8s ease-in-out infinite}
+.breath.active .breath-wave{animation:meditation-visible-air 8s ease-in-out infinite}
+.breath.active .wave-two{animation-delay:.25s}
+@keyframes meditation-inhale-exhale{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-8px) scale(1.08,1.07)}}
+@keyframes meditation-foliage-sway{0%,100%{opacity:.65;transform:scaleX(1)}50%{opacity:1;transform:scaleX(1.045)}}
+@keyframes meditation-visible-air{0%,100%{opacity:.2;transform:translateY(10px) scale(.92)}50%{opacity:1;transform:translateY(-11px) scale(1.08)}}
+@media(prefers-reduced-motion:reduce){.breath.active .meditation-person,.breath.active .meditation-foliage,.breath.active .breath-wave{animation:none}}
+
+/* Experience detail lightbox */
+.experience-image-button{position:absolute;inset:0;z-index:4;width:100%;height:100%;border:0;background:transparent;cursor:zoom-in}
+.experience-image-button:focus-visible{outline:3px solid #f3d8a5;outline-offset:-8px}
+.card-media:has(.experience-image-button:hover) img{transform:scale(1.015)}
+.experience-dialog{position:fixed;inset:0;width:min(1040px,calc(100vw - 40px));max-width:none;max-height:calc(100dvh - 40px);padding:0;border:1px solid #ae9574;background:#27352c;color:#f6ead9;box-shadow:0 30px 80px #0008;overflow:auto}
+.experience-dialog::backdrop{background:#100d0bd9}
+.experience-dialog[open]{animation:experience-open .45s ease both}
+.experience-dialog-layout{display:grid;grid-template-columns:1.1fr 1fr;min-height:490px}
+.experience-dialog-image{min-height:400px}.experience-dialog-image img{animation:experience-image-in .9s ease both}
+.experience-dialog-copy{padding:clamp(34px,5vw,70px);align-self:center}
+.experience-dialog-copy h2{font:400 clamp(40px,4.4vw,64px)/.98 'Cormorant Garamond',serif;margin:0 0 25px}
+.experience-dialog-copy .eyebrow{margin-bottom:24px;color:#c4a477}.experience-dialog-description{line-height:1.8;min-height:5.4em;color:#e3e2d7}
+.experience-dialog-price{font:400 32px 'Cormorant Garamond',serif;margin:22px 0 0}.experience-dialog-extra{font-size:13px;color:#d4d7c8;line-height:1.5}.experience-dialog-plan{margin-top:20px}
+.experience-dialog-close{position:absolute;z-index:5;right:16px;top:14px;width:42px;height:42px;border:1px solid #d4c0a2;border-radius:50%;background:#26352c;color:#fff3e2;font-size:27px;line-height:1;cursor:pointer}.experience-dialog-close:focus-visible{outline:2px solid #f3d8a5;outline-offset:3px}
+@keyframes experience-open{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes experience-image-in{from{transform:scale(1.06)}to{transform:scale(1)}}
+@media(max-width:700px){.experience-dialog{width:calc(100vw - 24px);max-height:calc(100dvh - 24px)}.experience-dialog-layout{grid-template-columns:1fr}.experience-dialog-image{min-height:220px;height:34vh}.experience-dialog-copy{padding:28px 26px 34px}.experience-dialog-description{min-height:0}.experience-dialog-copy h2{font-size:42px}}
+@media(prefers-reduced-motion:reduce){.experience-dialog[open],.experience-dialog-image img{animation:none}}
+
+/* A small quill follows the handwritten description. */
+.experience-dialog-description{font:italic 500 21px/1.5 'Cormorant Garamond',serif;letter-spacing:.01em;min-height:6em}
+.writing-quill{display:inline-block;vertical-align:baseline;width:22px;height:25px;margin-left:3px;color:#d7bc8d;transform:translateY(4px);transition:opacity .5s}
+.writing-quill svg{display:block;width:100%;height:100%}.writing-quill.finished{opacity:0}
+@media(max-width:700px){.experience-dialog-description{font-size:20px;min-height:0}}
