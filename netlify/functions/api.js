@@ -1,4 +1,5 @@
 const crypto = require('node:crypto');
+const nodemailer = require('nodemailer');
 const URLBASE = process.env.SUPABASE_URL?.replace(/\/$/,'');
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const ANON = process.env.SUPABASE_ANON_KEY;
@@ -17,7 +18,18 @@ async function scheduleData(service,first,last){const rooms=await api(`/rest/v1/
 async function slots(service,date,excludeId){if(!services[service]||!validDate(date))throw Error('Invalid date or service');const {rooms,appointments}=await scheduleData(service,date,date);return calculateSlots(service,date,rooms,appointments,excludeId)}
 async function monthAvailability(service,month){if(!services[service]||!/^\d{4}-(0[1-9]|1[0-2])$/.test(month||''))throw Error('Invalid month');const first=month+'-01',next=new Date(first+'T00:00:00Z');next.setUTCMonth(next.getUTCMonth()+1);const last=shiftDay(next.toISOString().slice(0,10),-1);const {rooms,appointments}=await scheduleData(service,first,last);const days=[];for(let d=first;d<=last;d=shiftDay(d,1))days.push({date:d,count:calculateSlots(service,d,rooms,appointments).length});return days}
 
-async function mail(to,subject,message){if(!process.env.RESEND_API_KEY||!process.env.RESEND_FROM)return false;try{const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.RESEND_FROM,to:[to],subject,text:message})});return r.ok}catch{return false}}
+async function mail(to,subject,message){
+ const gmailUser=process.env.GMAIL_SMTP_USER?.trim(),gmailPassword=process.env.GMAIL_SMTP_APP_PASSWORD?.replace(/\s/g,'');
+ if(gmailUser&&gmailPassword){
+  try{
+   const transport=nodemailer.createTransport({host:'smtp.gmail.com',port:465,secure:true,auth:{user:gmailUser,pass:gmailPassword},connectionTimeout:10000,greetingTimeout:10000,socketTimeout:15000});
+   const result=await transport.sendMail({from:{name:'Bella Vista Oasis Spa',address:gmailUser},to,subject,text:message});
+   return Array.isArray(result.accepted)&&result.accepted.length>0;
+  }catch(error){console.error('Customer email failed:',String(error.code||'SMTP_ERROR'));return false}
+ }
+ if(!process.env.RESEND_API_KEY||!process.env.RESEND_FROM)return false;
+ try{const r=await fetch('https://api.resend.com/emails',{method:'POST',headers:{Authorization:`Bearer ${process.env.RESEND_API_KEY}`,'Content-Type':'application/json'},body:JSON.stringify({from:process.env.RESEND_FROM,to:[to],subject,text:message})});return r.ok}catch{return false}
+}
 async function getByToken(token){if(!/^[a-f0-9]{64}$/.test(token||''))throw Error('Invalid management link');const rows=await api(`/rest/v1/appointments?token_hash=eq.${hash(token)}&select=*`);if(!rows.length)throw Error('Appointment not found');return rows[0]}
 async function staff(event){const token=(event.headers.authorization||event.headers.Authorization||'').replace(/^Bearer /i,'');if(!token)throw Error('Unauthorized');const r=await fetch(URLBASE+'/auth/v1/user',{headers:{apikey:ANON,Authorization:`Bearer ${token}`}});if(!r.ok)throw Error('Unauthorized');const user=await r.json();const roles=await api(`/rest/v1/staff_roles?user_id=eq.${user.id}&select=role`);if(!roles.length)throw Error('Unauthorized');return roles[0].role}
 exports.handler=async event=>{if(!URLBASE||!KEY||!ANON||!process.env.SITE_URL)return json(503,{error:'Booking is not configured yet.'});if(event.httpMethod!=='POST')return json(405,{error:'Method not allowed'});let b;try{b=JSON.parse(event.body||'{}')}catch{return json(400,{error:'Invalid request'})}try{
