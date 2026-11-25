@@ -45,3 +45,11 @@ Before accepting or deploying the demonstration, use a separate configured test 
 7. Verify the dashboard, booking and management flows on desktop and mobile with keyboard navigation, focus visibility and reduced motion. Verify staff invites and initial password creation using the deployed Supabase Auth configuration.
 
 No Supabase, Netlify, GitHub, or Resend account is configured by these files. SQL migrations, external integrations, concurrent booking behavior, and browser end-to-end flows must be tested against the actual configured services before claiming the system is ready.
+
+## November 2026 booking and dashboard update
+
+Apply `supabase/migrations/202611260001_booking_dashboard.sql` after the initial migration, then deploy the matching website and Netlify function together. Applying the migration removes the previous booking function signature, so schedule a short maintenance window between applying SQL and deploying the new code. Existing bookings retain an unspecified payment choice and may have no phone number.
+
+New bookings require a 7–15 digit phone number and a choice of full payment or a 50% down payment. The displayed amount is an expected amount, not a verified payment. Only staff-recorded amounts are included as recorded payments. Admins can cancel appointments and put rooms into maintenance; rooms with current or future bookings cannot be switched to maintenance until those bookings are rescheduled or cancelled. Maintenance applies to new bookings and rescheduling, and does not cancel existing appointments. Monthly analytics use appointment dates in Asia/Manila; booked value excludes cancellations, while recorded payments include them.
+
+Staff password recovery uses Supabase Auth email and redirects to `/staff.html`; the URL must be allowed in Supabase Auth settings. Reset delivery requires working Auth email configuration and is subject to provider and Supabase restrictions. Admin cancellations attempt a notification, but the dashboard indicates if email was not sent. Test these flows against a separate Supabase project before use, including concurrent booking versus maintenance, cancellation, email failures, password reset and room availability.

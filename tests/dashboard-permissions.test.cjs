@@ -1,0 +1,16 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');
+process.env.SUPABASE_URL='https://example.invalid';process.env.SUPABASE_SERVICE_ROLE_KEY='test';process.env.SUPABASE_ANON_KEY='test';process.env.SITE_URL='https://example.test';
+let role='staff', calls=[];
+global.fetch=async(url,opts={})=>{const u=new URL(url),path=u.pathname;calls.push({path,search:u.search,body:opts.body});let data=[];
+ if(path.endsWith('/auth/v1/user'))data={id:'test-user'};
+ else if(path.endsWith('/staff_roles'))data=[{role}];
+ else if(path.endsWith('/rooms'))data=u.search.includes('under_maintenance')?[]:[{id:'SR-1',service:'single',under_maintenance:true}];
+ else if(path.endsWith('/set_room_maintenance'))data={id:'SR-1',under_maintenance:true};
+ else if(path.endsWith('/appointments')&&opts.method==='PATCH')data=[{id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'}];
+ else if(path.endsWith('/appointments')&&u.search.includes('select=id%2Creference'))data=[{id:'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',reference:'TEST',customer_email:'test@example.test',status:'booked',start_at:'2099-11-30T06:00:00Z',late_review:false}];
+ else if(path.endsWith('/appointments')&&u.search.includes('select=service'))data=[{service:'single',status:'booked',price:800,payment_recorded:400,receipt_status:'pending'},{service:'family',status:'cancelled',price:4000,payment_recorded:500,receipt_status:'reviewed'}];
+ return new Response(JSON.stringify(data),{status:200,headers:{'Content-Type':'application/json'}})};
+const {handler}=require('../netlify/functions/api');const invoke=async body=>{const r=await handler({httpMethod:'POST',headers:{authorization:'Bearer test'},body:JSON.stringify(body)});return {status:r.statusCode,body:JSON.parse(r.body)}};
+test('staff cannot alter rooms, cancel bookings, or view admin analytics',async()=>{role='staff';for(const action of ['roomMaintenance','adminCancel','analytics'])assert.equal((await invoke({action})).status,403)});
+test('maintenance is filtered from customer availability',async()=>{calls=[];const r=await invoke({action:'availability',service:'single',date:'2099-11-30'});assert.deepEqual(r.body.slots,[]);assert.ok(calls.some(c=>c.path.endsWith('/rooms')&&c.search.includes('under_maintenance=eq.false')))});
+test('admin can update maintenance and see monthly analytics',async()=>{role='admin';const r=await invoke({action:'roomMaintenance',room:'SR-1',maintenance:true});assert.equal(r.status,200);assert.deepEqual(JSON.parse(calls.at(-1).body),{p_room:'SR-1',p_maintenance:true});const stats=await invoke({action:'analytics',month:'2099-11'});assert.equal(stats.status,200);assert.equal(stats.body.bookings,1);assert.equal(stats.body.cancellations,1);assert.equal(stats.body.bookedValue,800);assert.equal(stats.body.recordedPayments,900)});
