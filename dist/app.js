@@ -133,13 +133,13 @@ dialogPlan.addEventListener('click',()=>{
 const galleryDialog=document.querySelector('.gallery-dialog');
 const galleryDialogImage=galleryDialog.querySelector('img');
 const galleryCaption=galleryDialog.querySelector('.gallery-dialog-caption');
-const galleryNames={garden:'Woodland garden',treatment:'Treatment details',tea:'Herbal tea'};
+const galleryNames={garden:'Woodland garden',spaSession:'Spa session',treatment:'Treatment details',customer:'Guest at a spa',tea:'Herbal tea'};
 function openGalleryImage(item){
   const image=item.querySelector('img');if(!image)return;
   galleryDialogImage.src=image.src;
   const original=galleryGroup.querySelector(`[data-asset="${item.dataset.asset}"] img`);
   galleryDialogImage.alt=original?original.alt:'';
-  galleryCaption.textContent=galleryNames[item.dataset.asset]||'';
+  galleryCaption.textContent='Bella Vista Spa';
   galleryDialog.showModal();
 }
 gallery.querySelectorAll('.gallery-media').forEach(item=>{

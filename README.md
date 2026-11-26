@@ -63,3 +63,7 @@ Gmail is preferred when both Gmail settings are present; otherwise the existing 
 ## Payment confirmation email
 
 Apply `supabase/migrations/202611260002_receipt_email.sql` before deploying the matching function. When staff mark a receipt reviewed and record a positive payment amount (in either order), the server attempts a payment confirmation email; it does not attach the uploaded receipt. The dashboard reports provider acceptance or failure and offers a retry. SMTP acceptance is not proof of inbox delivery. Claiming prevents concurrent duplicate sends for the same amount; a timeout after provider acceptance can leave the outcome uncertain, so check the inbox before retrying. Updates to previously saved appointments are not emailed until staff update receipt review or payment or explicitly retry.
+
+## Branded staff invitations
+
+Supabase Auth sends invitations separately from customer emails. In the hosted Supabase dashboard, open Authentication → Emails → Templates → Invite user and paste the contents of `supabase/templates/invite.html` into the invitation body, with subject `You’re invited to Bella Vista Oasis Spa`. Save and test using a fictional or authorized test account. Keep `{{ .ConfirmationURL }}` unchanged; Supabase fills in the one-time invitation link. This repository file alone does not change the hosted Supabase template. The invitation contains no password. Customer email templates use `netlify/lib/email-templates.js` and include both HTML and plain-text versions.
